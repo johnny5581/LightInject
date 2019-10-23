@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- <TargetFrameworks>net46;netstandard1.1;netstandard1.3;netstandard1.6;netstandard2.0;netcoreapp2.0;net452</TargetFrameworks> -->
-    <TargetFrameworks>netcoreapp2.0;netstandard2.0;netstandard1.6;netstandard1.3;netstandard1.1;net46;net452</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;netstandard2.0;netstandard1.6;netstandard1.3;netstandard1.1;net46;net452;net40</TargetFrameworks>
     <Version>6.2.0</Version>
     <Authors>Bernhard Richter</Authors>
     <PackageProjectUrl>https://www.lightinject.net</PackageProjectUrl>
@@ -23,7 +23,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-  </PropertyGroup>
+  </PropertyGroup>  
   <ItemGroup>
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-beta.61">
