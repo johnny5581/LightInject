@@ -1746,7 +1746,9 @@ namespace LightInject
         /// <param name="hashTable">The target <see cref="ImmutableHashTable{TKey,TValue}"/> instance.</param>
         /// <param name="key">The key for which to search for a value.</param>
         /// <returns>If found, the <typeparamref name="TValue"/> with the given <paramref name="key"/>, otherwise the default <typeparamref name="TValue"/>.</returns>
+#if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
 
         // Excluded since this is a duplicate of the ImmutableHashTreeExtensions.Search method.
         [ExcludeFromCodeCoverage]
@@ -1794,7 +1796,9 @@ namespace LightInject
 
         // Excluded from coverage since it is equal to the generic version.
         [ExcludeFromCodeCoverage]
+#if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         internal static GetInstanceDelegate Search(this ImmutableHashTable<Type, GetInstanceDelegate> hashTable, Type key)
         {
             var hashCode = key.GetHashCode();
@@ -1839,7 +1843,9 @@ namespace LightInject
         /// <param name="tree">The target <see cref="ImmutableMapTree{TValue}"/>.</param>
         /// <param name="key">The key of the <see cref="ImmutableMapTree{TValue}"/> to get.</param>
         /// <returns>If found, the <typeparamref name="TValue"/> with the given <paramref name="key"/>, otherwise the default <typeparamref name="TValue"/>.</returns>
+#if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static TValue Search<TValue>(this ImmutableMapTree<TValue> tree, int key)
         {
             while (tree.Height != 0 && tree.Key != key)
@@ -1903,7 +1909,9 @@ namespace LightInject
         /// <param name="tree">The target <see cref="ImmutableHashTree{TKey,TValue}"/>.</param>
         /// <param name="key">The key of the <see cref="ImmutableHashTree{TKey,TValue}"/> to get.</param>
         /// <returns>If found, the <typeparamref name="TValue"/> with the given <paramref name="key"/>, otherwise the default <typeparamref name="TValue"/>.</returns>
+#if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static TValue Search<TKey, TValue>(this ImmutableHashTree<TKey, TValue> tree, TKey key)
         {
             int hashCode = key.GetHashCode();
@@ -2596,7 +2604,7 @@ namespace LightInject
         {
             if (serviceType.IsFuncRepresentingService() || serviceType.IsFuncRepresentingNamedService() || serviceType.IsFuncWithParameters() || serviceType.IsLazy())
             {
-                var returnType = serviceType.GenericTypeArguments.Last();
+                var returnType = serviceType.GetTypeInfo().GetGenericTypeArguments().Last();
                 return GetEmitMethod(returnType, serviceName) != null || availableServices.ContainsKey(serviceType);
             }
 
@@ -3078,7 +3086,7 @@ namespace LightInject
             {
                 if (type.GetTypeInfo().IsGenericType)
                 {
-                    return $"{type.FullName.Substring(0, type.FullName.LastIndexOf("`", StringComparison.OrdinalIgnoreCase))}<{string.Join(", ", type.GetTypeInfo().GenericTypeParameters.Select(GetPrettyName))}>";
+                    return $"{type.FullName.Substring(0, type.FullName.LastIndexOf("`", StringComparison.OrdinalIgnoreCase))}<{string.Join(", ", type.GetTypeInfo().GetGenericTypeParameters().Select(GetPrettyName))}>";
                 }
 
                 return type.Name;
@@ -3243,7 +3251,9 @@ namespace LightInject
                 ScopeManagerProvider);
         }
 
+#if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         internal object GetInstance(Type serviceType, Scope scope)
         {
             var instanceDelegate = delegates.Search(serviceType);
@@ -3370,7 +3380,7 @@ namespace LightInject
                     cd =>
                         cd.ServiceType == decoratorRegistration.ServiceType
                         || (cd.ServiceType.IsLazy()
-                            && cd.ServiceType.GetTypeInfo().GenericTypeArguments[0] == decoratorRegistration.ServiceType));
+                            && cd.ServiceType.GetTypeInfo().GetGenericTypeArguments()[0] == decoratorRegistration.ServiceType));
             return constructorDependency;
         }
 
@@ -3386,7 +3396,7 @@ namespace LightInject
         {
             Type implementingType = openGenericDecorator.ImplementingType;
             Type serviceType = serviceRegistration.ServiceType;
-            Type[] genericTypeArguments = serviceType.GenericTypeArguments;
+            Type[] genericTypeArguments = serviceType.GetTypeInfo().GetGenericTypeArguments();
 
             if (!TryCreateClosedGenericDecoratorType(serviceType, implementingType, out var closedGenericDecoratorType))
             {
@@ -3875,7 +3885,7 @@ namespace LightInject
 
                         emitter.Push(scopeVariable);
 
-                        var createScopedLazyFromDelegateMethod = LazyHelper.CreateScopedLazyFromDelegateMethod.MakeGenericMethod(dependency.ServiceType.GetTypeInfo().GenericTypeArguments.Last());
+                        var createScopedLazyFromDelegateMethod = LazyHelper.CreateScopedLazyFromDelegateMethod.MakeGenericMethod(dependency.ServiceType.GetTypeInfo().GetGenericTypeArguments().Last());
 
                         emitter.Emit(OpCodes.Call, createScopedLazyFromDelegateMethod);
                     }
@@ -3914,7 +3924,7 @@ namespace LightInject
             emitter.Push(instanceVariable);
             propertyDependencyEmitMethod(emitter);
             emitter.UnboxOrCast(propertyDependency.ServiceType);
-            emitter.Call(propertyDependency.Property.SetMethod);
+            emitter.Call(propertyDependency.Property.GetSetMethodAccessor());
         }
 
         private Action<IEmitter> GetEmitMethodForDependency(Dependency dependency)
@@ -4077,7 +4087,7 @@ namespace LightInject
 
         private Action<IEmitter> CreateEmitMethodBasedOnFuncServiceRequest(Type serviceType)
         {
-            var returnType = serviceType.GetTypeInfo().GenericTypeArguments.Last();
+            var returnType = serviceType.GetTypeInfo().GetGenericTypeArguments().Last();
             if (serviceType.IsFuncRepresentingService())
             {
                 var createScopedGenericFuncMethod = FuncHelper.CreateScopedGenericFuncMethod.MakeGenericMethod(returnType);
@@ -4189,7 +4199,7 @@ namespace LightInject
             Type elementType = TypeHelper.GetElementType(serviceType);
             Type closedGenericReadOnlyCollectionType = typeof(ReadOnlyCollection<>).MakeGenericType(elementType);
             ConstructorInfo constructorInfo =
-                closedGenericReadOnlyCollectionType.GetTypeInfo().DeclaredConstructors.Single();
+                closedGenericReadOnlyCollectionType.GetTypeInfo().GetDeclaredConstructors().Single();
 
             Action<IEmitter> listEmitMethod = CreateEmitMethodForListServiceRequest(serviceType);
 
@@ -4202,7 +4212,7 @@ namespace LightInject
 
         private Action<IEmitter> CreateEmitMethodBasedOnLazyServiceRequest(Type serviceType)
         {
-            var returnType = serviceType.GetTypeInfo().GenericTypeArguments.Last();
+            var returnType = serviceType.GetTypeInfo().GetGenericTypeArguments().Last();
             var createScopedLazyMethod = LazyHelper.CreateScopedLazyMethod.MakeGenericMethod(returnType);
             return e =>
             {
@@ -4717,7 +4727,7 @@ namespace LightInject
                 return dynamicMethod.CreateDelegate(delegateType);
             }
 
-#if NET452 || NET46 || NETCOREAPP2_0
+#if NET40 || NET452 || NET46 || NETCOREAPP2_0
             private void CreateDynamicMethod(Type returnType, Type[] parameterTypes)
             {
                 dynamicMethod = new DynamicMethod(
@@ -5398,7 +5408,7 @@ namespace LightInject
         /// <inheritdoc/>
         public ConstructorInfo Execute(Type implementingType)
         {
-            ConstructorInfo[] constructorCandidates = implementingType.GetTypeInfo().DeclaredConstructors.Where(c => c.IsPublic && !c.IsStatic).ToArray();
+            ConstructorInfo[] constructorCandidates = implementingType.GetTypeInfo().GetDeclaredConstructors().Where(c => c.IsPublic && !c.IsStatic).ToArray();
             if (constructorCandidates.Length == 0)
             {
                 throw new InvalidOperationException("Missing public constructor for Type: " + implementingType.FullName);
@@ -6286,7 +6296,9 @@ namespace LightInject
         /// <inheritdoc/>
         public object Create(Type serviceType) => serviceFactory.Create(serviceType, this);
 
+#if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         internal object GetScopedInstance(GetInstanceDelegate getInstanceDelegate, object[] arguments, int instanceDelegateIndex)
         {
             var createdInstance = createdInstances.Search(instanceDelegateIndex);
@@ -6424,7 +6436,7 @@ namespace LightInject
             }
 
             return
-                assembly.DefinedTypes.Where(
+                assembly.GetDefinedTypes().Where(
                         t => !t.IsAbstract && typeof(ICompositionRoot).GetTypeInfo().IsAssignableFrom(t))
                     .Cast<Type>()
                     .ToArray();
@@ -6523,11 +6535,13 @@ namespace LightInject
         public Type[] Execute(Assembly assembly)
         {
             return
-                assembly.DefinedTypes.Where(info => IsConcreteType(info))
+                assembly.GetDefinedTypes().Where(info => IsConcreteType(info))
                     .Except(InternalTypes.Select(i => i.GetTypeInfo()))
                     .Cast<Type>()
                     .ToArray();
         }
+
+#if !NET40
 
         private static bool IsConcreteType(TypeInfo typeInfo)
         {
@@ -6540,6 +6554,19 @@ namespace LightInject
 
         private static bool IsCompilerGenerated(TypeInfo typeInfo) =>
             typeInfo.IsDefined(typeof(CompilerGeneratedAttribute), false);
+#else
+        private static bool IsConcreteType(Type typeInfo)
+        {
+            return typeInfo.IsClass
+                   && !typeInfo.IsNestedPrivate
+                   && !typeInfo.IsAbstract
+                   && !Equals(typeInfo.Assembly, typeof(string).GetTypeInfo().Assembly)
+                   && !IsCompilerGenerated(typeInfo);
+        }
+
+        private static bool IsCompilerGenerated(Type typeInfo) =>
+            typeInfo.IsDefined(typeof(CompilerGeneratedAttribute), false);
+#endif
     }
 
     /// <summary>
@@ -6599,7 +6626,7 @@ namespace LightInject
         public GenericMappingResult Map(Type genericServiceType, Type openGenericImplementingType)
         {
             string[] genericParameterNames =
-                openGenericImplementingType.GetTypeInfo().GenericTypeParameters.Select(t => t.Name).ToArray();
+                openGenericImplementingType.GetTypeInfo().GetGenericTypeParameters().Select(t => t.Name).ToArray();
 
             var genericArgumentMap = CreateMap(genericServiceType, openGenericImplementingType, genericParameterNames);
 
@@ -6654,13 +6681,13 @@ namespace LightInject
 
         private static Type[] GetGenericArgumentsOrParameters(Type type)
         {
-            TypeInfo typeInfo = type.GetTypeInfo();
+            var typeInfo = type.GetTypeInfo();
             if (typeInfo.IsGenericTypeDefinition)
             {
-                return typeInfo.GenericTypeParameters;
+                return typeInfo.GetGenericTypeParameters();
             }
 
-            return typeInfo.GenericTypeArguments;
+            return typeInfo.GetGenericTypeArguments();
         }
 
         private static void MapGenericArguments(Type[] serviceTypeGenericArguments, Type[] baseTypeGenericArguments, IDictionary<string, Type> map)
@@ -6677,11 +6704,11 @@ namespace LightInject
                 {
                     if (serviceTypeGenericArgument.GetTypeInfo().IsGenericType)
                     {
-                        MapGenericArguments(serviceTypeGenericArgument.GetTypeInfo().GenericTypeArguments, baseTypeGenericArgument.GetTypeInfo().GenericTypeArguments, map);
+                        MapGenericArguments(serviceTypeGenericArgument.GetTypeInfo().GetGenericTypeArguments(), baseTypeGenericArgument.GetTypeInfo().GetGenericTypeArguments(), map);
                     }
                     else
                     {
-                        MapGenericArguments(serviceTypeGenericArguments, baseTypeGenericArgument.GetTypeInfo().GenericTypeArguments, map);
+                        MapGenericArguments(serviceTypeGenericArguments, baseTypeGenericArgument.GetTypeInfo().GetGenericTypeArguments(), map);
                     }
                 }
             }
@@ -6694,7 +6721,7 @@ namespace LightInject
             if (genericTypeDefinition.GetTypeInfo().IsInterface)
             {
                 baseTypeImplementingGenericTypeDefinition = implementingType
-                    .GetTypeInfo().ImplementedInterfaces
+                    .GetTypeInfo().GetImplementedInterfaces()
                     .FirstOrDefault(i => i.GetTypeInfo().IsGenericType && i.GetTypeInfo().GetGenericTypeDefinition() == genericTypeDefinition);
             }
             else
@@ -6806,7 +6833,7 @@ namespace LightInject
 
         private void BuildImplementationMap(Type implementingType, IServiceRegistry serviceRegistry, Func<ILifetime> lifetimeFactory, Func<Type, Type, bool> shouldRegister, Func<Type, Type, string> serviceNameProvider)
         {
-            Type[] interfaces = implementingType.GetTypeInfo().ImplementedInterfaces.ToArray();
+            Type[] interfaces = implementingType.GetTypeInfo().GetImplementedInterfaces().ToArray();
             foreach (Type interfaceType in interfaces)
             {
                 if (shouldRegister(interfaceType, implementingType))
@@ -6898,7 +6925,8 @@ namespace LightInject
 
         private static bool IsReadOnly(PropertyInfo propertyInfo)
         {
-            return propertyInfo.SetMethod == null || propertyInfo.SetMethod.IsStatic || propertyInfo.SetMethod.IsPrivate || propertyInfo.GetIndexParameters().Length > 0;
+            var setMethod = propertyInfo.GetSetMethodAccessor();
+            return setMethod == null || setMethod.IsStatic || setMethod.IsPrivate || propertyInfo.GetIndexParameters().Length > 0;
         }
     }
 #if NET452 || NET46 || NETCOREAPP2_0
@@ -7976,7 +8004,7 @@ namespace LightInject
         static LifetimeHelper()
         {
             GetInstanceMethod = typeof(ILifetime).GetTypeInfo().GetDeclaredMethod("GetInstance");
-            GetCurrentScopeMethod = typeof(IScopeManager).GetTypeInfo().GetDeclaredProperty("CurrentScope").GetMethod;
+            GetCurrentScopeMethod = typeof(IScopeManager).GetTypeInfo().GetDeclaredProperty("CurrentScope").GetGetMethodAccessor();
         }
 
         public static MethodInfo GetNonClosingGetInstanceMethod(Type lifetimeType)
@@ -7987,7 +8015,7 @@ namespace LightInject
         private static MethodInfo ResolveNonClosingGetInstanceMethod(Type lifetimeType)
         {
             Type[] parameterTypes = { typeof(GetInstanceDelegate), typeof(Scope), typeof(object[]) };
-            return lifetimeType.GetTypeInfo().DeclaredMethods.SingleOrDefault(m => m.GetParameters().Select(p => p.ParameterType).SequenceEqual(parameterTypes));
+            return lifetimeType.GetTypeInfo().GetDeclaredMethods().SingleOrDefault(m => m.GetParameters().Select(p => p.ParameterType).SequenceEqual(parameterTypes));
         }
     }
 
@@ -8141,9 +8169,9 @@ but either way the scope has to be started with 'container.BeginScope()'";
 
         public static Delegate CreateGetNamedInstanceWithParametersDelegate(IServiceFactory factory, Type delegateType, string serviceName)
         {
-            Type[] genericTypeArguments = delegateType.GetTypeInfo().GenericTypeArguments;
+            Type[] genericTypeArguments = delegateType.GetTypeInfo().GetGenericTypeArguments();
             var openGenericMethod =
-                typeof(ReflectionHelper).GetTypeInfo().DeclaredMethods
+                typeof(ReflectionHelper).GetTypeInfo().GetDeclaredMethods()
                     .Single(
                         m =>
                             m.GetGenericArguments().Length == genericTypeArguments.Length
@@ -8160,9 +8188,9 @@ but either way the scope has to be started with 'container.BeginScope()'";
 
         private static MethodInfo CreateGetInstanceWithParametersMethod(Type serviceType)
         {
-            Type[] genericTypeArguments = serviceType.GetTypeInfo().GenericTypeArguments;
+            Type[] genericTypeArguments = serviceType.GetTypeInfo().GetGenericTypeArguments();
             MethodInfo openGenericMethod =
-                typeof(ServiceFactoryExtensions).GetTypeInfo().DeclaredMethods.Single(m => m.Name == "GetInstance"
+                typeof(ServiceFactoryExtensions).GetTypeInfo().GetDeclaredMethods().Single(m => m.Name == "GetInstance"
                                                                                            && m.GetGenericArguments().Length == genericTypeArguments.Length && m.GetParameters().All(p => p.Name != "serviceName"));
 
             MethodInfo closedGenericMethod = openGenericMethod.MakeGenericMethod(genericTypeArguments);
@@ -8227,7 +8255,7 @@ but either way the scope has to be started with 'container.BeginScope()'";
             }
         }
 
-#if NET452 || NET46 || NETCOREAPP2_0
+#if NET40 || NET452 || NET46 || NETCOREAPP2_0
 
         /// <summary>
         /// Gets the method represented by the delegate.
@@ -8278,7 +8306,7 @@ but either way the scope has to be started with 'container.BeginScope()'";
             var typeInfo = type.GetTypeInfo();
             return typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(ICollection<>);
         }
-
+#if !NET40
         /// <summary>
         /// Gets a value indicating whether the <see cref="Type"/> is an <see cref="IReadOnlyCollection{T}"/> type.
         /// </summary>
@@ -8300,7 +8328,22 @@ but either way the scope has to be started with 'container.BeginScope()'";
             var typeInfo = type.GetTypeInfo();
             return typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(IReadOnlyList<>);
         }
-
+#else
+        /// <summary>
+        /// NET 4.0 無用處
+        /// </summary>
+        public static bool IsReadOnlyCollectionOfT(this Type type)
+        {
+            return false;
+        }
+        /// <summary>
+        /// NET 4.0 無用處
+        /// </summary>
+        public static bool IsReadOnlyListOfT(this Type type)
+        {
+            return false;
+        }
+#endif
         /// <summary>
         /// Gets a value indicating whether the <see cref="Type"/> is an <see cref="Lazy{T}"/> type.
         /// </summary>
@@ -8358,7 +8401,7 @@ but either way the scope has to be started with 'container.BeginScope()'";
 
             Type genericTypeDefinition = typeInfo.GetGenericTypeDefinition();
 
-            return genericTypeDefinition == typeof(Func<,>) && typeInfo.GenericTypeArguments[0] == typeof(string);
+            return genericTypeDefinition == typeof(Func<,>) && typeInfo.GetGenericTypeArguments()[0] == typeof(string);
         }
 
         /// <summary>
@@ -8382,7 +8425,7 @@ but either way the scope has to be started with 'container.BeginScope()'";
         public static Type GetElementType(Type type)
         {
             var typeInfo = type.GetTypeInfo();
-            var genericTypeArguments = typeInfo.GenericTypeArguments;
+            var genericTypeArguments = typeInfo.GetGenericTypeArguments();
             if (typeInfo.IsGenericType && genericTypeArguments.Length == 1)
             {
                 return genericTypeArguments[0];
@@ -8401,5 +8444,71 @@ but either way the scope has to be started with 'container.BeginScope()'";
 
         private static Type CreateEnumerableType(Type type) =>
             typeof(IEnumerable<>).MakeGenericType(type);
+    }
+
+    internal static class TypeExtensions
+    {
+#if NET40
+        public static Type GetTypeInfo(this Type type) => type;
+        public static Type[] GetGenericTypeArguments(this Type type) =>
+            type.GetGenericArguments();
+
+        public static Type[] GetGenericTypeParameters(this Type type) =>
+            type.GetGenericTypeArguments();
+
+        public static IEnumerable<Type> GetDefinedTypes(this Assembly assembly) =>
+            assembly.GetTypes();
+        public static PropertyInfo GetDeclaredProperty(this Type type, string name) =>
+            type.GetProperty(name);
+        public static IEnumerable<MethodInfo> GetDeclaredMethods(this Type type) =>
+            type.GetMethods();
+        public static MethodInfo GetDeclaredMethod(this Type type, string name) =>
+            type.GetMethod(name);
+
+        public static IEnumerable<Type> GetImplementedInterfaces(this Type type) =>
+            type.GetInterfaces();
+
+        public static IEnumerable<ConstructorInfo> GetDeclaredConstructors(this Type type) =>
+            type.GetConstructors();
+
+        public static MethodInfo GetSetMethodAccessor(this PropertyInfo propertyInfo) =>
+            propertyInfo.GetSetMethod();
+
+        public static MethodInfo GetGetMethodAccessor(this PropertyInfo propertyInfo) =>
+            propertyInfo.GetGetMethod();
+
+        public static Delegate CreateDelegate(this MethodInfo methodInfo, Type type, object target) =>
+            Delegate.CreateDelegate(type, target, methodInfo);
+
+        public static IEnumerable<PropertyInfo> GetRuntimeProperties(this Type type) =>
+            type.GetProperties(everything);
+
+        private const BindingFlags everything = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
+#else
+        public static Type[] GetGenericTypeArguments(this TypeInfo typeInfo) =>
+            typeInfo.GenericTypeArguments;
+
+        public static Type[] GetGenericTypeParameters(this TypeInfo typeInfo) =>
+            typeInfo.GenericTypeParameters;
+
+        public static IEnumerable<TypeInfo> GetDefinedTypes(this Assembly assembly) =>
+            assembly.DefinedTypes;
+
+        public static IEnumerable<MethodInfo> GetDeclaredMethods(this TypeInfo type) =>
+            type.DeclaredMethods;
+
+        public static IEnumerable<Type> GetImplementedInterfaces(this TypeInfo type) =>
+            type.ImplementedInterfaces;
+
+        public static IEnumerable<ConstructorInfo> GetDeclaredConstructors(this TypeInfo type) =>
+            type.DeclaredConstructors;
+
+        public static MethodInfo GetSetMethodAccessor(this PropertyInfo propertyInfo) =>
+            propertyInfo.SetMethod;
+
+        public static MethodInfo GetGetMethodAccessor(this PropertyInfo propertyInfo) =>
+            propertyInfo.GetMethod;
+#endif
     }
 }
