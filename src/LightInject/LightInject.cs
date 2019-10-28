@@ -4245,18 +4245,18 @@ namespace LightInject
             var openGenericServiceRegistrations =
                 GetOpenGenericServiceRegistrations(openGenericServiceType);
 
-            Dictionary<string, (Type closedGenericImplentingType, ILifetime lifetime)> candidates = new Dictionary<string, (Type closedGenericImplentingType, ILifetime lifetime)>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, Tuple<Type, ILifetime>> candidates = new Dictionary<string, Tuple<Type, ILifetime>>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var openGenericServiceRegistration in openGenericServiceRegistrations.Values)
             {
                 var closedGenericImplementingTypeCandidate = GenericArgumentMapper.TryMakeGenericType(closedGenericServiceType, openGenericServiceRegistration.ImplementingType);
                 if (closedGenericImplementingTypeCandidate != null)
                 {
-                    candidates.Add(openGenericServiceRegistration.ServiceName, (closedGenericImplementingTypeCandidate, openGenericServiceRegistration.Lifetime));
+                    candidates.Add(openGenericServiceRegistration.ServiceName, Tuple.Create(closedGenericImplementingTypeCandidate, openGenericServiceRegistration.Lifetime));
                 }
             }
 
-            (Type closedGenericImplentingType, ILifetime lifetime) candidate;
+            Tuple<Type, ILifetime> candidate;
 
             // We have a request for the default service
             if (string.IsNullOrWhiteSpace(serviceName))
@@ -4298,9 +4298,9 @@ namespace LightInject
                 var serviceRegistration = new ServiceRegistration
                 {
                     ServiceType = closedGenericServiceType,
-                    ImplementingType = candidate.closedGenericImplentingType,
+                    ImplementingType = candidate.Item1,
                     ServiceName = serviceName,
-                    Lifetime = CloneLifeTime(candidate.lifetime) ?? DefaultLifetime,
+                    Lifetime = CloneLifeTime(candidate.Item2) ?? DefaultLifetime,
                 };
                 Register(serviceRegistration);
                 return GetEmitMethod(serviceRegistration.ServiceType, serviceRegistration.ServiceName);
