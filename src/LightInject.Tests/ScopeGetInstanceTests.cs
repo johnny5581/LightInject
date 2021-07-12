@@ -2,6 +2,8 @@
 {
     using System;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using SampleLibrary;
     using Xunit;
     using Xunit.Sdk;
@@ -409,6 +411,27 @@
         }
 
         [Fact]
+        public void ShouldPassScopeToDecoratorPredicate()
+        {
+            var container = CreateContainer();
+            IServiceFactory passedFactory = null;
+            container.Register<IFoo, Foo>();
+            container.Decorate<IFoo>((factory, foo) =>
+            {
+                passedFactory = factory;
+                return new FooDecorator(foo);
+            });
+
+            using (var scope = container.BeginScope())
+            {
+                var instance = scope.GetInstance<IFoo>();
+                Assert.Same(scope, passedFactory);
+            }
+
+        }
+
+
+        [Fact]
         public void ShouldUseInitialScopeWhenResolvingParameterizedFunc()
         {
             var container = CreateContainer();
@@ -463,6 +486,12 @@
         }
 
         [Fact]
+        public void ShouldThrowNotImplementedForPerContainerLifeTime()
+        {
+            Assert.Throws<NotImplementedException>(() => new PerContainerLifetime().GetInstance(null, null));
+        }
+
+        [Fact]
         public void ShouldUseLifetimeEx()
         {
             var container = CreateContainer(new ContainerOptions() { EnableCurrentScope = false });
@@ -471,6 +500,45 @@
             {
                 var foo = scope.GetInstance<Foo>();
                 Assert.IsType<Foo>(foo);
+            }
+        }
+
+
+        [Fact]
+        public void ShouldReturnSameInstanceWhenInstanceIsRequestedInParallel()
+        {
+            var container = CreateContainer(new ContainerOptions() { EnableCurrentScope = false });
+            container.RegisterScoped<FooWithSlowConstructor>();
+            FooWithSlowConstructor.InstanceCount = 0;
+            using (var scope = container.BeginScope())
+            {
+                Parallel.Invoke(
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>(),
+                    () => scope.GetInstance<FooWithSlowConstructor>()
+                    );
+            }
+
+
+            Assert.Equal(1, FooWithSlowConstructor.InstanceCount);
+        }
+
+        public class FooWithSlowConstructor
+        {
+            public static int InstanceCount;
+
+            public FooWithSlowConstructor()
+            {
+                InstanceCount++;
             }
         }
     }

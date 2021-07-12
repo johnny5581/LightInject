@@ -18,7 +18,7 @@ namespace LightInject.Tests
         }
 
         [Fact]
-         public void ShouldRegisterNamedSingletonService()
+        public void ShouldRegisterNamedSingletonService()
         {
             var container = CreateContainer();
 
@@ -57,7 +57,7 @@ namespace LightInject.Tests
         }
 
         [Fact]
-         public void ShouldRegisterNamedSingletonServiceUsingFactory()
+        public void ShouldRegisterNamedSingletonServiceUsingFactory()
         {
             var container = CreateContainer();
 
@@ -66,7 +66,7 @@ namespace LightInject.Tests
             AssertSingletonRegistration<IFoo>(container, ServiceName);
         }
 
-         [Fact]
+        [Fact]
         public void ShouldRegisterSingletonServiceUsingNonGenericFactory()
         {
             var container = CreateContainer();
@@ -117,7 +117,7 @@ namespace LightInject.Tests
         }
 
         [Fact]
-         public void ShouldRegisterNamedScopedService()
+        public void ShouldRegisterNamedScopedService()
         {
             var container = CreateContainer();
 
@@ -155,7 +155,7 @@ namespace LightInject.Tests
         }
 
         [Fact]
-         public void ShouldRegisterNamedScopedServiceUsingFactory()
+        public void ShouldRegisterNamedScopedServiceUsingFactory()
         {
             var container = CreateContainer();
 
@@ -175,7 +175,7 @@ namespace LightInject.Tests
         }
 
         [Fact]
-         public void ShouldRegisterNamedScopedServiceUsingonGenericFactory()
+        public void ShouldRegisterNamedScopedServiceUsingonGenericFactory()
         {
             var container = CreateContainer();
 
@@ -215,8 +215,8 @@ namespace LightInject.Tests
             AssertTransientRegistration<IFoo>(container);
         }
 
-         [Fact]
-         public void ShouldRegisterNamedTransientService()
+        [Fact]
+        public void ShouldRegisterNamedTransientService()
         {
             var container = CreateContainer();
 
@@ -254,7 +254,7 @@ namespace LightInject.Tests
         }
 
         [Fact]
-         public void ShouldRegisterNamedTransientServiceUsingFactory()
+        public void ShouldRegisterNamedTransientServiceUsingFactory()
         {
             var container = CreateContainer();
 
@@ -274,7 +274,7 @@ namespace LightInject.Tests
         }
 
         [Fact]
-         public void ShouldRegisterNamedTransientServiceUsingonGenericFactory()
+        public void ShouldRegisterNamedTransientServiceUsingonGenericFactory()
         {
             var container = CreateContainer();
 
@@ -283,7 +283,7 @@ namespace LightInject.Tests
             AssertTransientRegistration<IFoo>(container, ServiceName);
         }
 
-         [Fact]
+        [Fact]
         public void ShouldRegisterConcreteTransientService()
         {
             var container = CreateContainer();
@@ -303,6 +303,30 @@ namespace LightInject.Tests
             AssertTransientRegistration<Foo>(container);
         }
 
+        [Fact]
+        public void ShouldOverrideUsingImplementingType()
+        {
+            var container = CreateContainer();
+
+            container.Register<IFoo, Foo>();
+            container.Override<IFoo, AnotherFoo>();
+
+            Assert.IsType<AnotherFoo>(container.GetInstance<IFoo>());
+        }
+
+        [Fact]
+        public void ShouldOverrideUsingImplementingTypeWithLifetime()
+        {
+            var container = CreateContainer();
+
+            container.Register<IFoo, Foo>();
+            container.Override<IFoo, AnotherFoo>(new PerContainerLifetime());
+            Assert.IsType<AnotherFoo>(container.GetInstance<IFoo>());
+            var firstInstance = container.GetInstance<IFoo>();
+            var secondInstance = container.GetInstance<IFoo>();
+
+            Assert.Same(firstInstance, secondInstance);
+        }
 
         private void AssertTransientRegistration<TService>(IServiceRegistry serviceRegistry, string serviceName = null)
         {
@@ -315,7 +339,7 @@ namespace LightInject.Tests
             AssertLifetimeRegistration<PerScopeLifetime, TService>(serviceRegistry, serviceName);
         }
 
-         private void AssertSingletonRegistration<TService>(IServiceRegistry serviceRegistry, string serviceName = null)
+        private void AssertSingletonRegistration<TService>(IServiceRegistry serviceRegistry, string serviceName = null)
         {
             AssertLifetimeRegistration<PerContainerLifetime, TService>(serviceRegistry, serviceName);
         }
@@ -325,5 +349,22 @@ namespace LightInject.Tests
             serviceName = serviceName ?? string.Empty;
             Assert.Contains<ServiceRegistration>(serviceRegistry.AvailableServices, sr => sr.ServiceType == typeof(TService) && sr.Lifetime.GetType() == typeof(TLifetime) && sr.ServiceName == serviceName);
         }
-   }
+
+        public class CompositionRootWithArgument : ICompositionRoot
+        {
+            public CompositionRootWithArgument(Configuration configuration)
+            {
+            }
+
+            public void Compose(IServiceRegistry serviceRegistry)
+            {
+                serviceRegistry.Register<Foo>();
+            }
+        }
+
+        public class Configuration
+        {
+
+        }
+    }
 }
