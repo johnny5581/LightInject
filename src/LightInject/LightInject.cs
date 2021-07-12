@@ -1167,12 +1167,11 @@ namespace LightInject
         /// <returns>An array containing the runtime arguments supplied when resolving the service.</returns>
         public static object[] Load(object[] constants)
         {
-            if (!(constants[constants.Length - 1] is object[] arguments))
+            if (!(constants[constants.Length - 1] is object[]))
             {
                 return new object[] { };
             }
-
-            return arguments;
+            return constants[constants.Length - 1] as object[];
         }
     }
 
@@ -1211,7 +1210,9 @@ namespace LightInject
         /// <param name="factory">The factory used to resolve the instance.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry Register(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory)
-            => Register(serviceRegistry, serviceType, factory, string.Empty, null);
+        {
+            return Register(serviceRegistry, serviceType, factory, string.Empty, null);
+        }
 
         /// <summary>
         /// Registers the <paramref name="serviceType"/> with a given <paramref name="lifetime"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1222,7 +1223,9 @@ namespace LightInject
         /// <param name="lifetime">The <see cref="ILifetime"/> used to control the lifetime of the service.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry Register(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, ILifetime lifetime)
-            => Register(serviceRegistry, serviceType, factory, string.Empty, lifetime);
+        {
+            return Register(serviceRegistry, serviceType, factory, string.Empty, lifetime);
+        }
 
         /// <summary>
         /// Registers the <paramref name="serviceType"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1233,7 +1236,10 @@ namespace LightInject
         /// <param name="serviceName">The name the service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry Register(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, string serviceName)
-            => Register(serviceRegistry, serviceType, factory, serviceName, null);
+        {
+            return Register(serviceRegistry, serviceType, factory, serviceName, null);
+        }
+
 
         /// <summary>
         /// Registers the <paramref name="serviceType"/> with a given <paramref name="lifetime"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1263,8 +1269,10 @@ namespace LightInject
         /// <param name="serviceType">The type of service to register.</param>
         /// <param name="factory">The factory used to resolve the instance.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
-        public static IServiceRegistry RegisterSingleton(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory) =>
-            serviceRegistry.RegisterSingleton(serviceType, factory, string.Empty);
+        public static IServiceRegistry RegisterSingleton(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory)
+        {
+            return serviceRegistry.RegisterSingleton(serviceType, factory, string.Empty);
+        }
 
         /// <summary>
         /// Registers a singleton <paramref name="serviceType"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1274,8 +1282,10 @@ namespace LightInject
         /// <param name="factory">The factory used to resolve the instance.</param>
         /// <param name="serviceName">The name the service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
-        public static IServiceRegistry RegisterSingleton(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, string serviceName) =>
-            serviceRegistry.Register(serviceType, factory, serviceName, new PerContainerLifetime());
+        public static IServiceRegistry RegisterSingleton(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, string serviceName)
+        {
+            return serviceRegistry.Register(serviceType, factory, serviceName, new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped <paramref name="serviceType"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1284,8 +1294,10 @@ namespace LightInject
         /// <param name="serviceType">The type of service to register.</param>
         /// <param name="factory">The factory used to resolve the instance.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
-        public static IServiceRegistry RegisterScoped(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory) =>
-            serviceRegistry.RegisterScoped(serviceType, factory, string.Empty);
+        public static IServiceRegistry RegisterScoped(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory)
+        {
+            return serviceRegistry.RegisterScoped(serviceType, factory, string.Empty);
+        }
 
         /// <summary>
         /// Registers a scoped <paramref name="serviceType"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1295,8 +1307,10 @@ namespace LightInject
         /// <param name="factory">The factory used to resolve the instance.</param>
         /// <param name="serviceName">The name the service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
-        public static IServiceRegistry RegisterScoped(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, string serviceName) =>
-            serviceRegistry.Register(serviceType, factory, serviceName, new PerScopeLifetime());
+        public static IServiceRegistry RegisterScoped(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, string serviceName)
+        {
+            return serviceRegistry.Register(serviceType, factory, serviceName, new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a transient <paramref name="serviceType"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1305,8 +1319,10 @@ namespace LightInject
         /// <param name="serviceType">The type of service to register.</param>
         /// <param name="factory">The factory used to resolve the instance.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
-        public static IServiceRegistry RegisterTransient(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory) =>
-            serviceRegistry.RegisterTransient(serviceType, factory, string.Empty);
+        public static IServiceRegistry RegisterTransient(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory)
+        {
+            return serviceRegistry.RegisterTransient(serviceType, factory, string.Empty);
+        }
 
         /// <summary>
         /// Registers a transient <paramref name="serviceType"/> using the non-generic <paramref name="factory"/> to resolve the instance.
@@ -1316,8 +1332,10 @@ namespace LightInject
         /// <param name="factory">The factory used to resolve the instance.</param>
         /// <param name="serviceName">The name the service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
-        public static IServiceRegistry RegisterTransient(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, string serviceName) =>
-            serviceRegistry.Register(serviceType, factory, serviceName);
+        public static IServiceRegistry RegisterTransient(this IServiceRegistry serviceRegistry, Type serviceType, Func<IServiceFactory, object> factory, string serviceName)
+        {
+            return serviceRegistry.Register(serviceType, factory, serviceName);
+        }
 
         /// <summary>
         /// Registers a singleton service of type <typeparamref name="TService"/> with an implementing type of <typeparamref name="TImplementation"/>.
@@ -1328,7 +1346,9 @@ namespace LightInject
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton<TService, TImplementation>(this IServiceRegistry serviceRegistry)
             where TImplementation : TService
-            => serviceRegistry.Register<TService, TImplementation>(new PerContainerLifetime());
+        {
+            return serviceRegistry.Register<TService, TImplementation>(new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a singleton service of type <typeparamref name="TService"/> as a concrete service.
@@ -1337,7 +1357,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton<TService>(this IServiceRegistry serviceRegistry)
-            => serviceRegistry.Register<TService>(new PerContainerLifetime());
+        {
+            return serviceRegistry.Register<TService>(new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a singleton service of type <typeparamref name="TService"/> with an implementing type of <typeparamref name="TImplementation"/>.
@@ -1349,7 +1371,9 @@ namespace LightInject
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton<TService, TImplementation>(this IServiceRegistry serviceRegistry, string serviceName)
             where TImplementation : TService
-            => serviceRegistry.Register<TService, TImplementation>(serviceName, new PerContainerLifetime());
+        {
+            return serviceRegistry.Register<TService, TImplementation>(serviceName, new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a singleton service of type <paramref name="serviceType"/> with an implementing type of <paramref name="implementingType"/>.
@@ -1359,7 +1383,9 @@ namespace LightInject
         /// <param name="implementingType">The type implementing the service type.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton(this IServiceRegistry serviceRegistry, Type serviceType, Type implementingType)
-            => serviceRegistry.Register(serviceType, implementingType, new PerContainerLifetime());
+        {
+            return serviceRegistry.Register(serviceType, implementingType, new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a singleton service of type <paramref name="serviceType"/> as a concrete service type.
@@ -1368,7 +1394,9 @@ namespace LightInject
         /// <param name="serviceType">The type of service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton(this IServiceRegistry serviceRegistry, Type serviceType)
-            => serviceRegistry.Register(serviceType, new PerContainerLifetime());
+        {
+            return serviceRegistry.Register(serviceType, new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a singleton service of type <paramref name="serviceType"/> with an implementing type of <paramref name="implementingType"/>.
@@ -1379,7 +1407,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton(this IServiceRegistry serviceRegistry, Type serviceType, Type implementingType, string serviceName)
-            => serviceRegistry.Register(serviceType, implementingType, serviceName, new PerContainerLifetime());
+        {
+            return serviceRegistry.Register(serviceType, implementingType, serviceName, new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a singleton service of type <typeparamref name="TService"/> using a factory function.
@@ -1389,7 +1419,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton<TService>(this IServiceRegistry serviceRegistry, Func<IServiceFactory, TService> factory)
-            => serviceRegistry.Register<TService>(factory, new PerContainerLifetime());
+        {
+            return serviceRegistry.Register<TService>(factory, new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a singleton service of type <typeparamref name="TService"/> using a factory function.
@@ -1400,7 +1432,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterSingleton<TService>(this IServiceRegistry serviceRegistry, Func<IServiceFactory, TService> factory, string serviceName)
-            => serviceRegistry.Register<TService>(factory, serviceName, new PerContainerLifetime());
+        {
+            return serviceRegistry.Register<TService>(factory, serviceName, new PerContainerLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <typeparamref name="TService"/> with an implementing type of <typeparamref name="TImplementation"/>.
@@ -1411,7 +1445,9 @@ namespace LightInject
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped<TService, TImplementation>(this IServiceRegistry serviceRegistry)
             where TImplementation : TService
-            => serviceRegistry.Register<TService, TImplementation>(new PerScopeLifetime());
+        {
+            return serviceRegistry.Register<TService, TImplementation>(new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <typeparamref name="TService"/> as a concrete service.
@@ -1420,7 +1456,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped<TService>(this IServiceRegistry serviceRegistry)
-            => serviceRegistry.Register<TService>(new PerScopeLifetime());
+        {
+            return serviceRegistry.Register<TService>(new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <typeparamref name="TService"/> with an implementing type of <typeparamref name="TImplementation"/>.
@@ -1432,7 +1470,9 @@ namespace LightInject
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped<TService, TImplementation>(this IServiceRegistry serviceRegistry, string serviceName)
             where TImplementation : TService
-            => serviceRegistry.Register<TService, TImplementation>(serviceName, new PerScopeLifetime());
+        {
+            return serviceRegistry.Register<TService, TImplementation>(serviceName, new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <paramref name="serviceType"/> with an implementing type of <paramref name="implementingType"/>.
@@ -1442,7 +1482,9 @@ namespace LightInject
         /// <param name="implementingType">The type implementing the service type.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped(this IServiceRegistry serviceRegistry, Type serviceType, Type implementingType)
-            => serviceRegistry.Register(serviceType, implementingType, new PerScopeLifetime());
+        {
+            return serviceRegistry.Register(serviceType, implementingType, new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <paramref name="serviceType"/> as a concrete service type.
@@ -1451,7 +1493,9 @@ namespace LightInject
         /// <param name="serviceType">The type of service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped(this IServiceRegistry serviceRegistry, Type serviceType)
-            => serviceRegistry.Register(serviceType, new PerScopeLifetime());
+        {
+            return serviceRegistry.Register(serviceType, new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <paramref name="serviceType"/> with an implementing type of <paramref name="implementingType"/>.
@@ -1462,7 +1506,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped(this IServiceRegistry serviceRegistry, Type serviceType, Type implementingType, string serviceName)
-            => serviceRegistry.Register(serviceType, implementingType, serviceName, new PerScopeLifetime());
+        {
+            return serviceRegistry.Register(serviceType, implementingType, serviceName, new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <typeparamref name="TService"/> using a factory function.
@@ -1472,7 +1518,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped<TService>(this IServiceRegistry serviceRegistry, Func<IServiceFactory, TService> factory)
-            => serviceRegistry.Register<TService>(factory, new PerScopeLifetime());
+        {
+            return serviceRegistry.Register<TService>(factory, new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a scoped service of type <typeparamref name="TService"/> using a factory function.
@@ -1483,7 +1531,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterScoped<TService>(this IServiceRegistry serviceRegistry, Func<IServiceFactory, TService> factory, string serviceName)
-            => serviceRegistry.Register<TService>(factory, serviceName, new PerScopeLifetime());
+        {
+            return serviceRegistry.Register<TService>(factory, serviceName, new PerScopeLifetime());
+        }
 
         /// <summary>
         /// Registers a transient service of type <typeparamref name="TService"/> with an implementing type of <typeparamref name="TImplementation"/>.
@@ -1494,7 +1544,9 @@ namespace LightInject
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient<TService, TImplementation>(this IServiceRegistry serviceRegistry)
             where TImplementation : TService
-            => serviceRegistry.Register<TService, TImplementation>();
+        {
+            return serviceRegistry.Register<TService, TImplementation>();
+        }
 
         /// <summary>
         /// Registers a transient service of type <typeparamref name="TService"/> as a concrete service.
@@ -1503,7 +1555,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient<TService>(this IServiceRegistry serviceRegistry)
-            => serviceRegistry.Register<TService>();
+        {
+            return serviceRegistry.Register<TService>();
+        }
 
         /// <summary>
         /// Registers a transient service of type <typeparamref name="TService"/> with an implementing type of <typeparamref name="TImplementation"/>.
@@ -1515,7 +1569,9 @@ namespace LightInject
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient<TService, TImplementation>(this IServiceRegistry serviceRegistry, string serviceName)
             where TImplementation : TService
-            => serviceRegistry.Register<TService, TImplementation>(serviceName);
+        {
+            return serviceRegistry.Register<TService, TImplementation>(serviceName);
+        }
 
         /// <summary>
         /// Registers a transient service of type <paramref name="serviceType"/> with an implementing type of <paramref name="implementingType"/>.
@@ -1525,7 +1581,9 @@ namespace LightInject
         /// <param name="implementingType">The type implementing the service type.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient(this IServiceRegistry serviceRegistry, Type serviceType, Type implementingType)
-            => serviceRegistry.Register(serviceType, implementingType);
+        {
+            return serviceRegistry.Register(serviceType, implementingType);
+        }
 
         /// <summary>
         /// Registers a singleton service of type <paramref name="serviceType"/> as a concrete service type.
@@ -1534,7 +1592,9 @@ namespace LightInject
         /// <param name="serviceType">The type of service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient(this IServiceRegistry serviceRegistry, Type serviceType)
-            => serviceRegistry.Register(serviceType);
+        {
+            return serviceRegistry.Register(serviceType);
+        }
 
         /// <summary>
         /// Registers a transient service of type <paramref name="serviceType"/> with an implementing type of <paramref name="implementingType"/>.
@@ -1545,7 +1605,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the service to register.</param>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient(this IServiceRegistry serviceRegistry, Type serviceType, Type implementingType, string serviceName)
-            => serviceRegistry.Register(serviceType, implementingType, serviceName);
+        {
+            return serviceRegistry.Register(serviceType, implementingType, serviceName);
+        }
 
         /// <summary>
         /// Registers a transient service of type <typeparamref name="TService"/> using a factory function.
@@ -1555,7 +1617,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient<TService>(this IServiceRegistry serviceRegistry, Func<IServiceFactory, TService> factory)
-            => serviceRegistry.Register<TService>(factory);
+        {
+            return serviceRegistry.Register<TService>(factory);
+        }
 
         /// <summary>
         /// Registers a transient service of type <typeparamref name="TService"/> using a factory function.
@@ -1566,7 +1630,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to register.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry RegisterTransient<TService>(this IServiceRegistry serviceRegistry, Func<IServiceFactory, TService> factory, string serviceName)
-            => serviceRegistry.Register<TService>(factory, serviceName);
+        {
+            return serviceRegistry.Register<TService>(factory, serviceName);
+        }
 
         /// <summary>
         /// Allows a registered service to be overridden by another <see cref="ServiceRegistration"/>.
@@ -1616,7 +1682,9 @@ namespace LightInject
         /// <typeparam name="TService">The type of service to initialize.</typeparam>
         /// <returns>The <see cref="IServiceRegistry"/>, for chaining calls.</returns>
         public static IServiceRegistry Initialize<TService>(this IServiceRegistry serviceRegistry, Action<IServiceFactory, TService> processor)
-            => serviceRegistry.Initialize(sr => sr.ServiceType == typeof(TService), (factory, instance) => processor(factory, (TService)instance));
+        {
+            return serviceRegistry.Initialize(sr => sr.ServiceType == typeof(TService), (factory, instance) => processor(factory, (TService)instance));
+        }
     }
 
     /// <summary>
@@ -1631,7 +1699,9 @@ namespace LightInject
         /// <param name="factory">The target <see cref="IServiceFactory"/>.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<TService>(this IServiceFactory factory)
-            => (TService)factory.GetInstance(typeof(TService));
+        {
+            return (TService)factory.GetInstance(typeof(TService));
+        }
 
         /// <summary>
         /// Gets a named instance of the given <typeparamref name="TService"/>.
@@ -1641,7 +1711,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the requested service.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<TService>(this IServiceFactory factory, string serviceName)
-            => (TService)factory.GetInstance(typeof(TService), serviceName);
+        {
+            return (TService)factory.GetInstance(typeof(TService), serviceName);
+        }
 
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
@@ -1652,7 +1724,9 @@ namespace LightInject
         /// <param name="value">The argument value.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T, TService>(this IServiceFactory factory, T value)
-            => (TService)factory.GetInstance(typeof(TService), new object[] { value });
+        {
+            return (TService)factory.GetInstance(typeof(TService), new object[] { value });
+        }
 
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
@@ -1664,8 +1738,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the requested service.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T, TService>(this IServiceFactory factory, T value, string serviceName)
-            => (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { value });
-
+        {
+            return (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { value });
+        }
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
         /// </summary>
@@ -1677,7 +1752,9 @@ namespace LightInject
         /// <param name="arg2">The second argument value.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T1, T2, TService>(this IServiceFactory factory, T1 arg1, T2 arg2)
-            => (TService)factory.GetInstance(typeof(TService), new object[] { arg1, arg2 });
+        {
+            return (TService)factory.GetInstance(typeof(TService), new object[] { arg1, arg2 });
+        }
 
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
@@ -1691,7 +1768,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the requested service.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T1, T2, TService>(this IServiceFactory factory, T1 arg1, T2 arg2, string serviceName)
-            => (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { arg1, arg2 });
+        {
+            return (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { arg1, arg2 });
+        }
 
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
@@ -1706,7 +1785,9 @@ namespace LightInject
         /// <param name="arg3">The third argument value.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T1, T2, T3, TService>(this IServiceFactory factory, T1 arg1, T2 arg2, T3 arg3)
-            => (TService)factory.GetInstance(typeof(TService), new object[] { arg1, arg2, arg3 });
+        {
+            return (TService)factory.GetInstance(typeof(TService), new object[] { arg1, arg2, arg3 });
+        }
 
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
@@ -1722,7 +1803,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the requested service.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T1, T2, T3, TService>(this IServiceFactory factory, T1 arg1, T2 arg2, T3 arg3, string serviceName)
-            => (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { arg1, arg2, arg3 });
+        {
+            return (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { arg1, arg2, arg3 });
+        }
 
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
@@ -1739,7 +1822,9 @@ namespace LightInject
         /// <param name="arg4">The fourth argument value.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T1, T2, T3, T4, TService>(this IServiceFactory factory, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-            => (TService)factory.GetInstance(typeof(TService), new object[] { arg1, arg2, arg3, arg4 });
+        {
+            return (TService)factory.GetInstance(typeof(TService), new object[] { arg1, arg2, arg3, arg4 });
+        }
 
         /// <summary>
         /// Gets an instance of the given <typeparamref name="TService"/>.
@@ -1757,7 +1842,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the requested service.</param>
         /// <returns>The requested service instance.</returns>
         public static TService GetInstance<T1, T2, T3, T4, TService>(this IServiceFactory factory, T1 arg1, T2 arg2, T3 arg3, T4 arg4, string serviceName)
-            => (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { arg1, arg2, arg3, arg4 });
+        {
+            return (TService)factory.GetInstance(typeof(TService), serviceName, new object[] { arg1, arg2, arg3, arg4 });
+        }
 
         /// <summary>
         /// Tries to get an instance of the given <typeparamref name="TService"/> type.
@@ -1766,7 +1853,9 @@ namespace LightInject
         /// <param name="factory">The target <see cref="IServiceFactory"/>.</param>
         /// <returns>The requested service instance if available, otherwise default(T).</returns>
         public static TService TryGetInstance<TService>(this IServiceFactory factory)
-            => (TService)factory.TryGetInstance(typeof(TService));
+        {
+            return (TService)factory.TryGetInstance(typeof(TService));
+        }
 
         /// <summary>
         /// Tries to get an instance of the given <typeparamref name="TService"/> type.
@@ -1776,7 +1865,9 @@ namespace LightInject
         /// <param name="serviceName">The name of the requested service.</param>
         /// <returns>The requested service instance if available, otherwise default(T).</returns>
         public static TService TryGetInstance<TService>(this IServiceFactory factory, string serviceName)
-            => (TService)factory.TryGetInstance(typeof(TService), serviceName);
+        {
+            return (TService)factory.TryGetInstance(typeof(TService), serviceName);
+        }
 
         /// <summary>
         /// Gets all instances of type <typeparamref name="TService"/>.
@@ -1785,7 +1876,9 @@ namespace LightInject
         /// <param name="factory">The target <see cref="IServiceFactory"/>.</param>
         /// <returns>A list that contains all implementations of the <typeparamref name="TService"/> type.</returns>
         public static IEnumerable<TService> GetAllInstances<TService>(this IServiceFactory factory)
-            => factory.GetInstance<IEnumerable<TService>>();
+        {
+            return factory.GetInstance<IEnumerable<TService>>();
+        }
 
         /// <summary>
         /// Creates an instance of a concrete class.
@@ -1796,7 +1889,9 @@ namespace LightInject
         /// <remarks>The concrete type will be registered if not already registered with the container.</remarks>
         public static TService Create<TService>(this IServiceFactory factory)
             where TService : class
-            => (TService)factory.Create(typeof(TService));
+        {
+            return (TService)factory.Create(typeof(TService));
+        }
     }
 
     /// <summary>
@@ -1809,14 +1904,14 @@ namespace LightInject
         /// </summary>
         /// <param name="logAction">The log delegate.</param>
         /// <param name="message">The message to be logged.</param>
-        public static void Info(this Action<LogEntry> logAction, string message) => logAction(new LogEntry(LogLevel.Info, message));
+        public static void Info(this Action<LogEntry> logAction, string message) { logAction(new LogEntry(LogLevel.Info, message)); }
 
         /// <summary>
         /// Logs a new entry with the <see cref="LogLevel.Warning"/> level.
         /// </summary>
         /// <param name="logAction">The log delegate.</param>
         /// <param name="message">The message to be logged.</param>
-        public static void Warning(this Action<LogEntry> logAction, string message) => logAction(new LogEntry(LogLevel.Warning, message));
+        public static void Warning(this Action<LogEntry> logAction, string message) { logAction(new LogEntry(LogLevel.Warning, message)); }
     }
 
     /// <summary>
@@ -1863,7 +1958,7 @@ namespace LightInject
                 }
             }
 
-            return default;
+            return default(TValue);
         }
 
         /// <summary>
@@ -1876,7 +1971,9 @@ namespace LightInject
         /// <param name="value">The value to be added to the tree.</param>
         /// <returns>A new <see cref="ImmutableHashTree{TKey,TValue}"/> that contains the new key/value pair.</returns>
         public static ImmutableHashTable<TKey, TValue> Add<TKey, TValue>(this ImmutableHashTable<TKey, TValue> hashTable, TKey key, TValue value)
-            => new ImmutableHashTable<TKey, TValue>(hashTable, key, value);
+        {
+            return new ImmutableHashTable<TKey, TValue>(hashTable, key, value);
+        }
 
         // Excluded from coverage since it is equal to the generic version.
         [ExcludeFromCodeCoverage]
@@ -1909,7 +2006,7 @@ namespace LightInject
                 }
             }
 
-            return default;
+            return default(GetInstanceDelegate);
         }
     }
 
@@ -1938,7 +2035,7 @@ namespace LightInject
                 return tree.Value;
             }
 
-            return default;
+            return default(TValue);
         }
 
         /// <summary>
@@ -1970,10 +2067,14 @@ namespace LightInject
         }
 
         private static ImmutableMapTree<TValue> AddToLeftBranch<TValue>(ImmutableMapTree<TValue> tree, int key, TValue value)
-        => new ImmutableMapTree<TValue>(tree.Key, tree.Value, tree.Left.Add(key, value), tree.Right);
+        {
+            return new ImmutableMapTree<TValue>(tree.Key, tree.Value, tree.Left.Add(key, value), tree.Right);
+        }
 
         private static ImmutableMapTree<TValue> AddToRightBranch<TValue>(ImmutableMapTree<TValue> tree, int key, TValue value)
-            => new ImmutableMapTree<TValue>(tree.Key, tree.Value, tree.Left, tree.Right.Add(key, value));
+        {
+            return new ImmutableMapTree<TValue>(tree.Key, tree.Value, tree.Left, tree.Right.Add(key, value));
+        }
     }
 
     /// <summary>
@@ -2015,7 +2116,7 @@ namespace LightInject
                 }
             }
 
-            return default;
+            return default(TValue);
         }
 
         /// <summary>
@@ -2081,10 +2182,14 @@ namespace LightInject
         }
 
         private static ImmutableHashTree<TKey, TValue> AddToLeftBranch<TKey, TValue>(ImmutableHashTree<TKey, TValue> tree, TKey key, TValue value)
-            => new ImmutableHashTree<TKey, TValue>(tree.Key, tree.Value, tree.Left.Add(key, value), tree.Right);
+        {
+            return new ImmutableHashTree<TKey, TValue>(tree.Key, tree.Value, tree.Left.Add(key, value), tree.Right);
+        }
 
         private static ImmutableHashTree<TKey, TValue> AddToRightBranch<TKey, TValue>(ImmutableHashTree<TKey, TValue> tree, TKey key, TValue value)
-            => new ImmutableHashTree<TKey, TValue>(tree.Key, tree.Value, tree.Left, tree.Right.Add(key, value));
+        {
+            return new ImmutableHashTree<TKey, TValue>(tree.Key, tree.Value, tree.Left, tree.Right.Add(key, value));
+        }
     }
 
     /// <summary>
@@ -2180,7 +2285,7 @@ namespace LightInject
         /// Pushes the element containing an object reference at a specified index onto the stack.
         /// </summary>
         /// <param name="emitter">The target <see cref="IEmitter"/>.</param>
-        public static void PushArrayElement(this IEmitter emitter) => emitter.Emit(OpCodes.Ldelem_Ref);
+        public static void PushArrayElement(this IEmitter emitter) { emitter.Emit(OpCodes.Ldelem_Ref); }
 
         /// <summary>
         /// Pushes the arguments associated with a service request onto the stack.
@@ -2219,14 +2324,14 @@ namespace LightInject
         /// </summary>
         /// <param name="emitter">The target <see cref="IEmitter"/>.</param>
         /// <param name="methodInfo">The <see cref="MethodInfo"/> that represents the method to be called.</param>
-        public static void Call(this IEmitter emitter, MethodInfo methodInfo) => emitter.Emit(OpCodes.Callvirt, methodInfo);
+        public static void Call(this IEmitter emitter, MethodInfo methodInfo) { emitter.Emit(OpCodes.Callvirt, methodInfo); }
 
         /// <summary>
         /// Pushes a new instance onto the stack.
         /// </summary>
         /// <param name="emitter">The target <see cref="IEmitter"/>.</param>
         /// <param name="constructorInfo">The <see cref="ConstructionInfo"/> that represent the object to be created.</param>
-        public static void New(this IEmitter emitter, ConstructorInfo constructorInfo) => emitter.Emit(OpCodes.Newobj, constructorInfo);
+        public static void New(this IEmitter emitter, ConstructorInfo constructorInfo) { emitter.Emit(OpCodes.Newobj, constructorInfo); }
 
         /// <summary>
         /// Pushes the given <paramref name="localBuilder"/> onto the stack.
@@ -2334,7 +2439,7 @@ namespace LightInject
         /// </summary>
         /// <param name="emitter">The target <see cref="IEmitter"/>.</param>
         /// <param name="elementType">The element <see cref="Type"/> of the new array.</param>
-        public static void PushNewArray(this IEmitter emitter, Type elementType) => emitter.Emit(OpCodes.Newarr, elementType);
+        public static void PushNewArray(this IEmitter emitter, Type elementType) { emitter.Emit(OpCodes.Newarr, elementType); }
 
         /// <summary>
         /// Pushes an <see cref="int"/> value onto the stack.
@@ -2389,13 +2494,13 @@ namespace LightInject
         /// </summary>
         /// <param name="emitter">The target <see cref="IEmitter"/>.</param>
         /// <param name="type">The <see cref="Type"/> for which the value will be casted into.</param>
-        public static void Cast(this IEmitter emitter, Type type) => emitter.Emit(OpCodes.Castclass, type);
+        public static void Cast(this IEmitter emitter, Type type) { emitter.Emit(OpCodes.Castclass, type); }
 
         /// <summary>
         /// Returns from the current method.
         /// </summary>
         /// <param name="emitter">The target <see cref="IEmitter"/>.</param>
-        public static void Return(this IEmitter emitter) => emitter.Emit(OpCodes.Ret);
+        public static void Return(this IEmitter emitter) { emitter.Emit(OpCodes.Ret); }
     }
 
     /// <summary>
@@ -2416,12 +2521,17 @@ namespace LightInject
             LogFactory = t => message => { };
             EnableCurrentScope = true;
             EnableOptionalArguments = false;
+            VarianceFilter = _ => true;
+            DefaultServiceSelector = services => string.Empty;
         }
 
         /// <summary>
         /// Gets the default <see cref="ContainerOptions"/> used across all <see cref="ServiceContainer"/> instances.
         /// </summary>
-        public static ContainerOptions Default => DefaultOptions.Value;
+        public static ContainerOptions Default
+        {
+            get { return DefaultOptions.Value; }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether variance is applied when resolving an <see cref="IEnumerable{T}"/>.
@@ -2438,7 +2548,7 @@ namespace LightInject
         /// The default is to apply variance to all <see cref="IEnumerable{T}"/> services.
         /// This filter will only be applied if the <see cref="EnableVariance"/> is set to 'true'.
         /// </remarks>
-        public Func<Type, bool> VarianceFilter { get; set; } = _ => true;
+        public Func<Type, bool> VarianceFilter { get; set; }
 
         /// <summary>
         /// Gets or sets the log factory that creates the delegate used for logging.
@@ -2449,7 +2559,7 @@ namespace LightInject
         /// Gets or sets the function that determines the default service name.
         /// The default is to use the service registered without a service name as the default service.
         /// </summary>
-        public Func<string[], string> DefaultServiceSelector { get; set; } = services => string.Empty;
+        public Func<string[], string> DefaultServiceSelector { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether property injection is enabled.
@@ -2477,7 +2587,10 @@ namespace LightInject
         /// </remarks>
         public bool EnableOptionalArguments { get; set; }
 
-        private static ContainerOptions CreateDefaultContainerOptions() => new ContainerOptions();
+        private static ContainerOptions CreateDefaultContainerOptions()
+        {
+            return new ContainerOptions();
+        }
     }
 
     /// <summary>
@@ -2730,7 +2843,10 @@ namespace LightInject
             }
         }
 
-        private ILifetime DefaultLifetime => (ILifetime)(defaultLifetimeType != null ? Activator.CreateInstance(defaultLifetimeType) : null);
+        private ILifetime DefaultLifetime
+        {
+            get { return (ILifetime)(defaultLifetimeType != null ? Activator.CreateInstance(defaultLifetimeType) : null); }
+        }
 
         /// <inheritdoc/>
         public bool CanGetInstance(Type serviceType, string serviceName)
@@ -2782,7 +2898,9 @@ namespace LightInject
 
         /// <inheritdoc/>
         public IServiceRegistry RegisterFallback(Func<Type, string, bool> predicate, Func<ServiceRequest, object> factory)
-            => RegisterFallback(predicate, factory, DefaultLifetime);
+        {
+            return RegisterFallback(predicate, factory, DefaultLifetime);
+        }
 
         /// <inheritdoc/>
         public IServiceRegistry RegisterFallback(Func<Type, string, bool> predicate, Func<ServiceRequest, object> factory, ILifetime lifetime)
@@ -2821,15 +2939,21 @@ namespace LightInject
 
         /// <inheritdoc/>
         public IServiceRegistry RegisterAssembly(Assembly assembly, Func<Type, Type, bool> shouldRegister)
-            => RegisterAssembly(assembly, () => DefaultLifetime, shouldRegister);
+        {
+            return RegisterAssembly(assembly, () => DefaultLifetime, shouldRegister);
+        }
 
         /// <inheritdoc/>
         public IServiceRegistry RegisterAssembly(Assembly assembly, Func<ILifetime> lifetimeFactory)
-            => RegisterAssembly(assembly, lifetimeFactory, (serviceType, implementingType) => true);
+        {
+            return RegisterAssembly(assembly, lifetimeFactory, (serviceType, implementingType) => true);
+        }
 
         /// <inheritdoc/>
         public IServiceRegistry RegisterAssembly(Assembly assembly, Func<ILifetime> lifetimeFactory, Func<Type, Type, bool> shouldRegister)
-            => RegisterAssembly(assembly, lifetimeFactory, shouldRegister, ServiceNameProvider.GetServiceName);
+        {
+            return RegisterAssembly(assembly, lifetimeFactory, shouldRegister, ServiceNameProvider.GetServiceName);
+        }
 
         /// <inheritdoc/>
         public IServiceRegistry RegisterAssembly(Assembly assembly, Func<ILifetime> lifetimeFactory, Func<Type, Type, bool> shouldRegister, Func<Type, Type, string> serviceNameProvider)
@@ -2860,8 +2984,8 @@ namespace LightInject
             if (isLocked)
             {
                 var message =
-                    $"Attempt to register a constructor dependency {typeof(TDependency)} after the first call to GetInstance." +
-                    $"This might lead to incorrect behavior if a service with a {typeof(TDependency)} dependency has already been resolved";
+                    "Attempt to register a constructor dependency " + typeof(TDependency) + " after the first call to GetInstance." +
+                    "This might lead to incorrect behavior if a service with a " + typeof(TDependency) + " dependency has already been resolved";
 
                 log.Warning(message);
             }
@@ -2879,8 +3003,8 @@ namespace LightInject
             if (isLocked)
             {
                 var message =
-                    $"Attempt to register a constructor dependency {typeof(TDependency)} after the first call to GetInstance." +
-                    $"This might lead to incorrect behavior if a service with a {typeof(TDependency)} dependency has already been resolved";
+                    "Attempt to register a constructor dependency " + typeof(TDependency) + " after the first call to GetInstance." +
+                    "This might lead to incorrect behavior if a service with a " + typeof(TDependency) + " dependency has already been resolved";
 
                 log.Warning(message);
             }
@@ -2898,8 +3022,8 @@ namespace LightInject
             if (isLocked)
             {
                 var message =
-                    $"Attempt to register a property dependency {typeof(TDependency)} after the first call to GetInstance." +
-                    $"This might lead to incorrect behavior if a service with a {typeof(TDependency)} dependency has already been resolved";
+                    "Attempt to register a property dependency " + typeof(TDependency) + " after the first call to GetInstance." +
+                    "This might lead to incorrect behavior if a service with a " + typeof(TDependency) + " dependency has already been resolved";
 
                 log.Warning(message);
             }
@@ -3205,7 +3329,7 @@ namespace LightInject
             {
                 if (rootService.ServiceType.GetTypeInfo().IsGenericTypeDefinition)
                 {
-                    log.Warning($"Unable to precompile open generic type '{GetPrettyName(rootService.ServiceType)}'");
+                    log.Warning("Unable to precompile open generic type '" + GetPrettyName(rootService.ServiceType) + "'");
                     continue;
                 }
 
@@ -3218,20 +3342,20 @@ namespace LightInject
                     CreateNamedDelegate(Tuple.Create(rootService.ServiceType, rootService.ServiceName), true);
                 }
             }
+        }
 
-            string GetPrettyName(Type type)
+        private string GetPrettyName(Type type)
+        {
+            if (type.GetTypeInfo().IsGenericType)
             {
-                if (type.GetTypeInfo().IsGenericType)
-                {
-                    return $"{type.FullName.Substring(0, type.FullName.LastIndexOf("`", StringComparison.OrdinalIgnoreCase))}<{string.Join(", ", type.GetTypeInfo().GenericTypeParameters.Select(GetPrettyName))}>";
-                }
-
-                return type.Name;
+                return type.FullName.Substring(0, type.FullName.LastIndexOf("`", StringComparison.OrdinalIgnoreCase)) + "<" + string.Join(", ", type.GetTypeInfo().GenericTypeParameters.Select(GetPrettyName)) + ">";
             }
+
+            return type.Name;
         }
 
         /// <inheritdoc/>
-        public void Compile() => Compile(sr => true);
+        public void Compile() { Compile(sr => true); }
 
         /// <inheritdoc/>
         public void Compile<TService>(string serviceName = null)
@@ -3499,8 +3623,9 @@ namespace LightInject
 
         private static ILifetime CloneLifeTime(ILifetime lifetime)
         {
-            if (lifetime is ICloneableLifeTime cloneable)
+            if (lifetime is ICloneableLifeTime)
             {
+                var cloneable = lifetime as ICloneableLifeTime;
                 return cloneable.Clone();
             }
 
@@ -3532,10 +3657,10 @@ namespace LightInject
             Type implementingType = openGenericDecorator.ImplementingType;
             Type serviceType = serviceRegistration.ServiceType;
             Type[] genericTypeArguments = serviceType.GenericTypeArguments;
-
-            if (!TryCreateClosedGenericDecoratorType(serviceType, implementingType, out var closedGenericDecoratorType))
+            Type closedGenericDecoratorType;
+            if (!TryCreateClosedGenericDecoratorType(serviceType, implementingType, out closedGenericDecoratorType))
             {
-                log.Info($"Skipping decorator [{implementingType.FullName}] since it is incompatible with the service type [{serviceType.FullName}]");
+                log.Info("Skipping decorator [" + implementingType.FullName + "] since it is incompatible with the service type [" + serviceType.FullName + "]");
                 return null;
             }
 
@@ -3620,13 +3745,15 @@ namespace LightInject
 
         private Delegate GetConstructorDependencyDelegate(Type type, string serviceName)
         {
-            GetConstructorDependencyFactories(type).TryGetValue(serviceName, out Delegate dependencyDelegate);
+            Delegate dependencyDelegate;
+            GetConstructorDependencyFactories(type).TryGetValue(serviceName, out dependencyDelegate);
             return dependencyDelegate;
         }
 
         private Delegate GetPropertyDependencyExpression(Type type, string serviceName)
         {
-            GetPropertyDependencyFactories(type).TryGetValue(serviceName, out Delegate dependencyDelegate);
+            Delegate dependencyDelegate;
+            GetPropertyDependencyFactories(type).TryGetValue(serviceName, out dependencyDelegate);
             return dependencyDelegate;
         }
 
@@ -3734,8 +3861,8 @@ namespace LightInject
                     serviceName = options.DefaultServiceSelector(serviceNames);
                 }
             }
-
-            registrations.TryGetValue(serviceName, out Action<IEmitter> emitMethod);
+            Action<IEmitter> emitMethod;
+            registrations.TryGetValue(serviceName, out emitMethod);
             return emitMethod ?? CreateEmitMethodForUnknownService(serviceType, serviceName);
         }
 
@@ -3756,7 +3883,7 @@ namespace LightInject
         {
             if (isLocked)
             {
-                var message = $"Cannot overwrite existing serviceregistration {existingRegistration} after the first call to GetInstance.";
+                var message = "Cannot overwrite existing serviceregistration " + existingRegistration + " after the first call to GetInstance.";
                 log.Warning(message);
                 return existingRegistration;
             }
@@ -4046,9 +4173,11 @@ namespace LightInject
                 emitter = GetEmitMethod(dependency.ServiceType, dependency.Name);
                 if (emitter == null && dependency.IsRequired)
                 {
-                    if (dependency is ConstructorDependency constructorDependency && constructorDependency.Parameter.HasDefaultValue && options.EnableOptionalArguments)
+                    if (dependency is ConstructorDependency)
                     {
-                        emitter = GetEmitMethodForDefaultValue(constructorDependency);
+                        var constructorDependency = dependency as ConstructorDependency;
+                        if (constructorDependency.Parameter.HasDefaultValue && options.EnableOptionalArguments)
+                            emitter = GetEmitMethodForDefaultValue(constructorDependency);
                     }
                     else
                     {
@@ -4459,8 +4588,21 @@ namespace LightInject
                 }
             }
 
-            ClosedGenericCandidate candidate;
 
+
+            ClosedGenericCandidate candidate = default(ClosedGenericCandidate);
+            Func<Action<IEmitter>> RegisterAndGetEmitMethod = () =>
+            {
+                var serviceRegistration = new ServiceRegistration
+                {
+                    ServiceType = closedGenericServiceType,
+                    ImplementingType = candidate.ClosedGenericImplentingType,
+                    ServiceName = serviceName,
+                    Lifetime = CloneLifeTime(candidate.Lifetime) ?? DefaultLifetime,
+                };
+                Register(serviceRegistration);
+                return GetEmitMethod(serviceRegistration.ServiceType, serviceRegistration.ServiceName);
+            };
             // We have a request for the default service
             if (string.IsNullOrWhiteSpace(serviceName))
             {
@@ -4494,19 +4636,6 @@ namespace LightInject
                 {
                     return null;
                 }
-            }
-
-            Action<IEmitter> RegisterAndGetEmitMethod()
-            {
-                var serviceRegistration = new ServiceRegistration
-                {
-                    ServiceType = closedGenericServiceType,
-                    ImplementingType = candidate.ClosedGenericImplentingType,
-                    ServiceName = serviceName,
-                    Lifetime = CloneLifeTime(candidate.Lifetime) ?? DefaultLifetime,
-                };
-                Register(serviceRegistration);
-                return GetEmitMethod(serviceRegistration.ServiceType, serviceRegistration.ServiceName);
             }
         }
 
@@ -4616,13 +4745,13 @@ namespace LightInject
                 }
                 catch (InvalidOperationException ex)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(implementingType), ex.Message);
+                    throw new ArgumentOutOfRangeException("implementingType", ex.Message);
                 }
             }
             else
             if (!serviceType.GetTypeInfo().IsAssignableFrom(implementingType.GetTypeInfo()))
             {
-                throw new ArgumentOutOfRangeException(nameof(implementingType), $"The implementing type {implementingType.FullName} is not assignable from {serviceType.FullName}.");
+                throw new ArgumentOutOfRangeException("implementingType", "The implementing type " + implementingType.FullName + " is not assignable from " + serviceType.FullName + ".");
             }
         }
 
@@ -4772,13 +4901,12 @@ namespace LightInject
             {
                 disposableLifeTimes.Add(serviceRegistration.Lifetime);
             }
-
-            bool IsNotServiceFactory(Type serviceType)
-            {
-                return !typeof(IServiceFactory).GetTypeInfo().IsAssignableFrom(serviceType.GetTypeInfo());
-            }
         }
 
+        private bool IsNotServiceFactory(Type serviceType)
+        {
+            return !typeof(IServiceFactory).GetTypeInfo().IsAssignableFrom(serviceType.GetTypeInfo());
+        }
         private void PushScope(IEmitter emitter)
         {
             if (options.EnableCurrentScope)
@@ -4818,7 +4946,7 @@ namespace LightInject
 
         private GetInstanceDelegate CreateDefaultDelegate(Type serviceType, bool throwError)
         {
-            log.Info($"Compiling delegate for resolving service : {serviceType}");
+            log.Info("Compiling delegate for resolving service : " + serviceType);
 
             var instanceDelegate = CreateDelegate(serviceType, string.Empty, throwError);
             if (instanceDelegate == null)
@@ -4832,7 +4960,7 @@ namespace LightInject
 
         private GetInstanceDelegate CreateNamedDelegate(Tuple<Type, string> key, bool throwError)
         {
-            log.Info($"Compiling delegate for resolving service : {key.Item1}, name: {key.Item2}");
+            log.Info("Compiling delegate for resolving service : " + key.Item1 + ", name: " + key.Item2);
             var instanceDelegate = CreateDelegate(key.Item1, key.Item2, throwError);
             if (instanceDelegate == null)
             {
@@ -4905,9 +5033,9 @@ namespace LightInject
                 Lifetime = lifetime;
             }
 
-            public Type ClosedGenericImplentingType { get; }
+            public Type ClosedGenericImplentingType { get; private set; }
 
-            public ILifetime Lifetime { get; }
+            public ILifetime Lifetime { get; private set; }
         }
 
         private class Storage<T>
@@ -5037,7 +5165,7 @@ namespace LightInject
                 this.serviceRegistrationFactory = serviceRegistrationFactory;
             }
 
-            public Func<ServiceRegistration, bool> CanOverride { get; }
+            public Func<ServiceRegistration, bool> CanOverride { get; private set; }
 
             [ExcludeFromCodeCoverage]
             public ServiceRegistration Execute(IServiceFactory serviceFactory, ServiceRegistration serviceRegistration)
@@ -6083,10 +6211,14 @@ namespace LightInject
     /// </summary>
     public class ServiceRegistration : Registration
     {
+        public ServiceRegistration()
+        {
+            ServiceName = string.Empty;
+        }
         /// <summary>
         /// Gets or sets the name of the service.
         /// </summary>
-        public string ServiceName { get; set; } = string.Empty;
+        public string ServiceName { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="ILifetime"/> instance that controls the lifetime of the service.
@@ -6118,11 +6250,12 @@ namespace LightInject
         /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>.</param>
         public override bool Equals(object obj)
         {
-            if (!(obj is ServiceRegistration other))
+
+            if (!(obj is ServiceRegistration))
             {
                 return false;
             }
-
+            var other = obj as ServiceRegistration;
             var result = ServiceName == other.ServiceName && ServiceType == other.ServiceType;
             return result;
         }
@@ -6133,8 +6266,8 @@ namespace LightInject
         /// <returns>A string representation of the <see cref="ServiceRegistration"/>.</returns>
         public override string ToString()
         {
-            var lifeTime = Lifetime?.ToString() ?? "Transient";
-            return $"ServiceType: '{ServiceType}', ServiceName: '{ServiceName}', ImplementingType: '{ImplementingType}', Lifetime: '{lifeTime}'";
+            var lifeTime = Lifetime != null ? Lifetime.ToString() : "Transient";
+            return "ServiceType: '" + ServiceType + "', ServiceName: '" + ServiceName + "', ImplementingType: '" + ImplementingType + "', Lifetime: '" + lifeTime + "'";
         }
     }
 
@@ -6192,7 +6325,7 @@ namespace LightInject
             if (missingParameters.Any())
             {
                 var missingParametersString = missingParameters.Aggregate((current, next) => current + "," + next);
-                string message = $"The generic parameter(s) {missingParametersString} found in type {openGenericImplementingType.FullName} cannot be mapped from {genericServiceType.FullName}";
+                string message = "The generic parameter(s) " + missingParametersString + " found in type " + openGenericImplementingType.FullName + " cannot be mapped from " + genericServiceType.FullName;
                 throw new InvalidOperationException(message);
             }
 
@@ -6396,8 +6529,9 @@ namespace LightInject
         /// </summary>
         public void Dispose()
         {
-            if (singleton is IDisposable disposable)
+            if (singleton is IDisposable)
             {
+                var disposable = singleton as IDisposable;
                 disposable.Dispose();
             }
         }
@@ -6477,7 +6611,7 @@ namespace LightInject
         public abstract Scope CurrentScope { get; set; }
 
         /// <inheritdoc/>
-        public IServiceFactory ServiceFactory { get; }
+        public IServiceFactory ServiceFactory { get; private set; }
 
         /// <inheritdoc/>
         public Scope BeginScope()
@@ -6627,8 +6761,9 @@ namespace LightInject
 
                 for (var i = disposableObjects.Count - 1; i >= 0; i--)
                 {
-                    if (disposableObjects[i] is IDisposable disposable)
+                    if (disposableObjects[i] is IDisposable)
                     {
+                        var disposable = disposableObjects[i] as IDisposable;
                         if (disposedObjects.Add(disposable))
                         {
                             disposable.Dispose();
@@ -6637,45 +6772,61 @@ namespace LightInject
                 }
             }
 
-            scopeManager?.EndScope(this);
+            if (scopeManager != null)
+                scopeManager.EndScope(this);
             var completedHandler = Completed;
-            completedHandler?.Invoke(this, new EventArgs());
+            if (completedHandler != null)
+                completedHandler.Invoke(this, new EventArgs());
             IsDisposed = true;
         }
 
         /// <inheritdoc/>
-        public Scope BeginScope() => serviceFactory.BeginScope();
+        public Scope BeginScope() { return serviceFactory.BeginScope(); }
 
         /// <inheritdoc/>
-        public object GetInstance(Type serviceType) =>
-            serviceFactory.GetInstance(serviceType, this);
+        public object GetInstance(Type serviceType)
+        {
+            return serviceFactory.GetInstance(serviceType, this);
+        }
 
         /// <inheritdoc/>
-        public object GetInstance(Type serviceType, string serviceName) =>
-            serviceFactory.GetInstance(serviceType, this, serviceName);
+        public object GetInstance(Type serviceType, string serviceName)
+        {
+            return serviceFactory.GetInstance(serviceType, this, serviceName);
+        }
 
         /// <inheritdoc/>
-        public object GetInstance(Type serviceType, object[] arguments) =>
-            serviceFactory.GetInstance(serviceType, arguments, this);
+        public object GetInstance(Type serviceType, object[] arguments)
+        {
+            return serviceFactory.GetInstance(serviceType, arguments, this);
+        }
 
         /// <inheritdoc/>
         public object GetInstance(Type serviceType, string serviceName, object[] arguments)
-            => serviceFactory.GetInstance(serviceType, serviceName, arguments, this);
+        {
+            return serviceFactory.GetInstance(serviceType, serviceName, arguments, this);
+        }
 
         /// <inheritdoc/>
         public object TryGetInstance(Type serviceType)
-            => serviceFactory.TryGetInstance(serviceType, this);
+        {
+            return serviceFactory.TryGetInstance(serviceType, this);
+        }
 
         /// <inheritdoc/>
         public object TryGetInstance(Type serviceType, string serviceName)
-            => serviceFactory.TryGetInstance(serviceType, serviceName, this);
+        {
+            return serviceFactory.TryGetInstance(serviceType, serviceName, this);
+        }
 
         /// <inheritdoc/>
         public IEnumerable<object> GetAllInstances(Type serviceType)
-            => serviceFactory.GetAllInstances(serviceType, this);
+        {
+            return serviceFactory.GetAllInstances(serviceType, this);
+        }
 
         /// <inheritdoc/>
-        public object Create(Type serviceType) => serviceFactory.Create(serviceType, this);
+        public object Create(Type serviceType) { return serviceFactory.Create(serviceType, this); }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal object GetScopedInstance(GetInstanceDelegate getInstanceDelegate, object[] arguments, int instanceDelegateIndex)
@@ -6692,8 +6843,9 @@ namespace LightInject
                 if (createdInstance == null)
                 {
                     createdInstance = getInstanceDelegate(arguments, this);
-                    if (createdInstance is IDisposable disposable)
+                    if (createdInstance is IDisposable)
                     {
+                        var disposable = createdInstance as IDisposable;
                         TrackInstance(disposable);
                     }
 
@@ -6739,7 +6891,7 @@ namespace LightInject
         /// <summary>
         /// Gets a value that indicates the lifespan of a given <see cref="ILifetime"/>.
         /// </summary>
-        public int Value { get; }
+        public int Value { get; private set; }
     }
 
     /// <summary>
@@ -6796,8 +6948,10 @@ namespace LightInject
         /// <param name="compositionRootAttributeExtractor">The <see cref="ICompositionRootAttributeExtractor"/>
         /// that is responsible for extracting attributes of type <see cref="CompositionRootTypeAttribute"/> from
         /// a given <see cref="Assembly"/>.</param>
-        public CompositionRootTypeExtractor(ICompositionRootAttributeExtractor compositionRootAttributeExtractor) =>
+        public CompositionRootTypeExtractor(ICompositionRootAttributeExtractor compositionRootAttributeExtractor)
+        {
             this.compositionRootAttributeExtractor = compositionRootAttributeExtractor;
+        }
 
         /// <summary>
         /// Extracts concrete <see cref="ICompositionRoot"/> implementations found in the given <paramref name="assembly"/>.
@@ -6836,14 +6990,14 @@ namespace LightInject
         /// Initializes a new instance of the <see cref="CachedTypeExtractor"/> class.
         /// </summary>
         /// <param name="typeExtractor">The target <see cref="ITypeExtractor"/>.</param>
-        public CachedTypeExtractor(ITypeExtractor typeExtractor) => this.typeExtractor = typeExtractor;
+        public CachedTypeExtractor(ITypeExtractor typeExtractor) { this.typeExtractor = typeExtractor; }
 
         /// <summary>
         /// Extracts types found in the given <paramref name="assembly"/>.
         /// </summary>
         /// <param name="assembly">The <see cref="Assembly"/> for which to extract types.</param>
         /// <returns>A set of types found in the given <paramref name="assembly"/>.</returns>
-        public Type[] Execute(Assembly assembly) => cache.GetOrAdd(assembly, typeExtractor.Execute);
+        public Type[] Execute(Assembly assembly) { return cache.GetOrAdd(assembly, typeExtractor.Execute); }
     }
 
     /// <summary>
@@ -6929,8 +7083,10 @@ namespace LightInject
                    && !IsCompilerGenerated(typeInfo);
         }
 
-        private static bool IsCompilerGenerated(TypeInfo typeInfo) =>
-            typeInfo.IsDefined(typeof(CompilerGeneratedAttribute), false);
+        private static bool IsCompilerGenerated(TypeInfo typeInfo)
+        {
+            return typeInfo.IsDefined(typeof(CompilerGeneratedAttribute), false);
+        }
     }
 
     /// <summary>
@@ -7121,7 +7277,7 @@ namespace LightInject
 
             if (baseTypeImplementingGenericTypeDefinition == null)
             {
-                throw new InvalidOperationException($"The generic type definition {genericTypeDefinition.FullName} not implemented by implementing type {implementingType.FullName}");
+                throw new InvalidOperationException("The generic type definition " + genericTypeDefinition.FullName + " not implemented by implementing type " + implementingType.FullName);
             }
 
             return baseTypeImplementingGenericTypeDefinition;
@@ -7474,14 +7630,14 @@ namespace LightInject
             Count = Items.Length;
         }
 
-        private ImmutableList() => Items = new T[0];
+        private ImmutableList() { Items = new T[0]; }
 
         /// <summary>
         /// Creates a new <see cref="ImmutableList{T}"/> that contains the new <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to be added to the new list.</param>
         /// <returns>A new <see cref="ImmutableList{T}"/> that contains the new <paramref name="value"/>.</returns>
-        public ImmutableList<T> Add(T value) => new ImmutableList<T>(this, value);
+        public ImmutableList<T> Add(T value) { return new ImmutableList<T>(this, value); }
     }
 
     /// <summary>
@@ -7721,9 +7877,9 @@ namespace LightInject
                 new ImmutableHashTree<TKey, TValue>(node.Key, node.Value, node.Left.Right, node.Right));
         }
 
-        private bool IsLeftHeavy() => Left.Height > Right.Height;
+        private bool IsLeftHeavy() { return Left.Height > Right.Height; }
 
-        private bool IsRightHeavy() => Right.Height > Left.Height;
+        private bool IsRightHeavy() { return Right.Height > Left.Height; }
     }
 
     /// <summary>
@@ -7857,9 +8013,9 @@ namespace LightInject
                 new ImmutableMapTree<TValue>(node.Key, node.Value, node.Left.Right, node.Right));
         }
 
-        private bool IsLeftHeavy() => Left.Height > Right.Height;
+        private bool IsLeftHeavy() { return Left.Height > Right.Height; }
 
-        private bool IsRightHeavy() => Right.Height > Left.Height;
+        private bool IsRightHeavy() { return Right.Height > Left.Height; }
     }
 
     /// <summary>
@@ -7894,7 +8050,7 @@ namespace LightInject
         /// Returns the string representation of an <see cref="Instruction"/>.
         /// </summary>
         /// <returns>The string representation of an <see cref="Instruction"/>.</returns>
-        public override string ToString() => Code.ToString();
+        public override string ToString() { return Code.ToString(); }
     }
 
     /// <summary>
@@ -7925,7 +8081,10 @@ namespace LightInject
         /// Returns the string representation of an <see cref="Instruction{T}"/>.
         /// </summary>
         /// <returns>The string representation of an <see cref="Instruction{T}"/>.</returns>
-        public override string ToString() => $"{base.ToString()} {Argument}";
+        public override string ToString()
+        {
+            return base.ToString() + " " + Argument;
+        }
     }
 
     /// <summary>
@@ -7956,10 +8115,16 @@ namespace LightInject
         }
 
         /// <inheritdoc/>
-        public Type StackType => stack.Count == 0 ? null : stack.Peek();
+        public Type StackType
+        {
+            get { return stack.Count == 0 ? null : stack.Peek(); }
+        }
 
         /// <inheritdoc/>
-        public List<Instruction> Instructions => instructions;
+        public List<Instruction> Instructions
+        {
+            get { return instructions; }
+        }
 
         /// <inheritdoc/>
         public void Emit(OpCode code)
@@ -8426,7 +8591,9 @@ namespace LightInject
         }
 
         public static MethodInfo GetNonClosingGetInstanceMethod(Type lifetimeType)
-            => NonClosingGetInstanceMethods.GetOrAdd(lifetimeType, ResolveNonClosingGetInstanceMethod);
+        {
+            return NonClosingGetInstanceMethods.GetOrAdd(lifetimeType, ResolveNonClosingGetInstanceMethod);
+        }
 
         private static MethodInfo ResolveNonClosingGetInstanceMethod(Type lifetimeType)
         {
@@ -8455,11 +8622,12 @@ namespace LightInject
 
         public static object ValidateTrackedTransient(object instance, Scope scope)
         {
-            if (instance is IDisposable disposable)
+            if (instance is IDisposable)
             {
+                var disposable = instance as IDisposable;
                 if (scope == null)
                 {
-                    string message = $@"The disposable instance ({instance.GetType()}) was created outside a scope. If 'ContainerOptions.EnableCurrentScope=false',
+                    string message = "The disposable instance (" + instance.GetType() + @") was created outside a scope. If 'ContainerOptions.EnableCurrentScope=false',
 the service must be requested directly from the scope. If `ContainerOptions.EnableCurrentScope=true`, the service can be requested from the container,
 but either way the scope has to be started with 'container.BeginScope()'";
                     throw new InvalidOperationException(message);
@@ -8475,7 +8643,7 @@ but either way the scope has to be started with 'container.BeginScope()'";
         {
             if (scope == null)
             {
-                string message = $@"Attempt to create a scoped instance ({typeof(TService)}) outside a scope. If 'ContainerOptions.EnableCurrentScope=false',
+                string message = "Attempt to create a scoped instance (" + typeof(TService) + @") outside a scope. If 'ContainerOptions.EnableCurrentScope=false',
 the service must be requested directly from the scope. If `ContainerOptions.EnableCurrentScope=true`, the service can be requested from the container,
 but either way the scope has to be started with 'container.BeginScope()'";
                 throw new InvalidOperationException(message);
@@ -8511,13 +8679,19 @@ but either way the scope has to be started with 'container.BeginScope()'";
         }
 
         public static Func<object> CreateScopedFunc(GetInstanceDelegate getInstanceDelegate, object[] constants, Scope scope)
-            => () => getInstanceDelegate(constants, scope);
+        {
+            return () => getInstanceDelegate(constants, scope);
+        }
 
         public static Func<T> CreateScopedGenericFunc<T>(ServiceContainer serviceContainer, Scope scope)
-            => () => (T)serviceContainer.GetInstance(typeof(T), scope);
+        {
+            return () => (T)serviceContainer.GetInstance(typeof(T), scope);
+        }
 
         public static Func<string, T> CreateScopedGenericNamedFunc<T>(ServiceContainer serviceContainer, Scope scope)
-            => (serviceName) => (T)serviceContainer.GetInstance(typeof(T), scope, serviceName);
+        {
+            return (serviceName) => (T)serviceContainer.GetInstance(typeof(T), scope, serviceName);
+        }
     }
 
     internal static class ServiceFactoryLoader
@@ -8525,7 +8699,9 @@ but either way the scope has to be started with 'container.BeginScope()'";
         public static readonly MethodInfo LoadServiceFactoryMethod;
 
         static ServiceFactoryLoader()
-            => LoadServiceFactoryMethod = typeof(ServiceFactoryLoader).GetTypeInfo().GetDeclaredMethod("LoadServiceFactory");
+        {
+            LoadServiceFactoryMethod = typeof(ServiceFactoryLoader).GetTypeInfo().GetDeclaredMethod("LoadServiceFactory");
+        }
 
         public static IServiceFactory LoadServiceFactory(IServiceFactory serviceFactory, IScopeManager scopeManager, Scope scope)
         {
@@ -8549,10 +8725,14 @@ but either way the scope has to be started with 'container.BeginScope()'";
         public static readonly MethodInfo CreateServiceRequestMethod;
 
         static ServiceRequestHelper()
-            => CreateServiceRequestMethod = typeof(ServiceRequestHelper).GetTypeInfo().GetDeclaredMethod("CreateServiceRequest");
+        {
+            CreateServiceRequestMethod = typeof(ServiceRequestHelper).GetTypeInfo().GetDeclaredMethod("CreateServiceRequest");
+        }
 
         public static ServiceRequest CreateServiceRequest<TService>(string serviceName, IServiceFactory serviceFactory)
-            => new ServiceRequest(typeof(TService), serviceName, serviceFactory);
+        {
+            return new ServiceRequest(typeof(TService), serviceName, serviceFactory);
+        }
     }
 
     internal static class LazyHelper
@@ -8568,20 +8748,26 @@ but either way the scope has to be started with 'container.BeginScope()'";
         }
 
         public static Lazy<T> CreateScopedLazy<T>(ServiceContainer serviceContainer, Scope scope)
-            => new Lazy<T>(() => (T)serviceContainer.GetInstance(typeof(T), scope));
+        {
+            return new Lazy<T>(() => (T)serviceContainer.GetInstance(typeof(T), scope));
+        }
 
         public static Lazy<T> CreateScopedLazyFromDelegate<T>(GetInstanceDelegate getInstanceDelegate, object[] constants, Scope scope)
-            => new Lazy<T>(() => (T)getInstanceDelegate(constants, scope));
+        {
+            return new Lazy<T>(() => (T)getInstanceDelegate(constants, scope));
+        }
     }
 
     internal static class ReflectionHelper
     {
         private static readonly Lazy<ThreadSafeDictionary<Type, MethodInfo>> GetInstanceWithParametersMethods;
 
-        static ReflectionHelper() => GetInstanceWithParametersMethods = CreateLazyGetInstanceWithParametersMethods();
+        static ReflectionHelper() { GetInstanceWithParametersMethods = CreateLazyGetInstanceWithParametersMethods(); }
 
         public static MethodInfo GetGetInstanceWithParametersMethod(Type serviceType)
-            => GetInstanceWithParametersMethods.Value.GetOrAdd(serviceType, CreateGetInstanceWithParametersMethod);
+        {
+            return GetInstanceWithParametersMethods.Value.GetOrAdd(serviceType, CreateGetInstanceWithParametersMethod);
+        }
 
         public static Delegate CreateGetNamedInstanceWithParametersDelegate(IServiceFactory factory, Type delegateType, string serviceName)
         {
@@ -8597,7 +8783,9 @@ but either way the scope has to be started with 'container.BeginScope()'";
         }
 
         private static Lazy<ThreadSafeDictionary<Type, MethodInfo>> CreateLazyGetInstanceWithParametersMethods()
-            => new Lazy<ThreadSafeDictionary<Type, MethodInfo>>(() => new ThreadSafeDictionary<Type, MethodInfo>());
+        {
+            return new Lazy<ThreadSafeDictionary<Type, MethodInfo>>(() => new ThreadSafeDictionary<Type, MethodInfo>());
+        }
 
         private static MethodInfo CreateGetInstanceWithParametersMethod(Type serviceType)
         {
@@ -8613,16 +8801,24 @@ but either way the scope has to be started with 'container.BeginScope()'";
 #pragma warning disable IDE0051
 
         private static Func<TArg, TService> CreateGenericGetNamedParameterizedInstanceDelegate<TArg, TService>(IServiceFactory factory, string serviceName)
-            => arg => factory.GetInstance<TArg, TService>(arg, serviceName);
+        {
+            return arg => factory.GetInstance<TArg, TService>(arg, serviceName);
+        }
 
         private static Func<TArg1, TArg2, TService> CreateGenericGetNamedParameterizedInstanceDelegate<TArg1, TArg2, TService>(IServiceFactory factory, string serviceName)
-            => (arg1, arg2) => factory.GetInstance<TArg1, TArg2, TService>(arg1, arg2, serviceName);
+        {
+            return (arg1, arg2) => factory.GetInstance<TArg1, TArg2, TService>(arg1, arg2, serviceName);
+        }
 
         private static Func<TArg1, TArg2, TArg3, TService> CreateGenericGetNamedParameterizedInstanceDelegate<TArg1, TArg2, TArg3, TService>(IServiceFactory factory, string serviceName)
-            => (arg1, arg2, arg3) => factory.GetInstance<TArg1, TArg2, TArg3, TService>(arg1, arg2, arg3, serviceName);
+        {
+            return (arg1, arg2, arg3) => factory.GetInstance<TArg1, TArg2, TArg3, TService>(arg1, arg2, arg3, serviceName);
+        }
 
         private static Func<TArg1, TArg2, TArg3, TArg4, TService> CreateGenericGetNamedParameterizedInstanceDelegate<TArg1, TArg2, TArg3, TArg4, TService>(IServiceFactory factory, string serviceName)
-            => (arg1, arg2, arg3, arg4) => factory.GetInstance<TArg1, TArg2, TArg3, TArg4, TService>(arg1, arg2, arg3, arg4, serviceName);
+        {
+            return (arg1, arg2, arg3, arg4) => factory.GetInstance<TArg1, TArg2, TArg3, TArg4, TService>(arg1, arg2, arg3, arg4, serviceName);
+        }
     }
 
 #pragma warning restore IDE0051
@@ -8657,7 +8853,7 @@ but either way the scope has to be started with 'container.BeginScope()'";
         /// </summary>
         /// <param name="del">The target <see cref="Delegate"/>.</param>
         /// <returns>The method represented by the delegate.</returns>
-        public static MethodInfo GetMethodInfo(this Delegate del) => del.Method;
+        public static MethodInfo GetMethodInfo(this Delegate del) { return del.Method; }
 
         /// <summary>
         /// Gets the custom attributes for this <paramref name="assembly"/>.
@@ -8666,7 +8862,9 @@ but either way the scope has to be started with 'container.BeginScope()'";
         /// <param name="attributeType">The type of <see cref="Attribute"/> objects to return.</param>
         /// <returns>The custom attributes for this <paramref name="assembly"/>.</returns>
         public static IEnumerable<Attribute> GetCustomAttributes(this Assembly assembly, Type attributeType)
-            => assembly.GetCustomAttributes(attributeType, false).Cast<Attribute>();
+        {
+            return assembly.GetCustomAttributes(attributeType, false).Cast<Attribute>();
+        }
 #endif
 
         /// <summary>
@@ -8817,7 +9015,7 @@ but either way the scope has to be started with 'container.BeginScope()'";
 #if NETSTANDARD1_1 || NETSTANDARD1_3 || NETSTANDARD1_6 || NETSTANDARD2_0
         public static object GetDefaultValue(Type type)
         {
-            var openGenericGetDefaultValueInternalMethod = typeof(TypeHelper).GetTypeInfo().GetDeclaredMethod(nameof(GetDefaultValueInternal));
+            var openGenericGetDefaultValueInternalMethod = typeof(TypeHelper).GetTypeInfo().GetDeclaredMethod("GetDefaultValueInternal");
             var closedGenerictDefaultValueInternalMethod = openGenericGetDefaultValueInternalMethod.MakeGenericMethod(type);
             return closedGenerictDefaultValueInternalMethod.Invoke(null, new object[] { });
         }
@@ -8833,10 +9031,14 @@ but either way the scope has to be started with 'container.BeginScope()'";
     {
         private static readonly ThreadSafeDictionary<Type, Type> EnumerableTypes = new ThreadSafeDictionary<Type, Type>();
 
-        public static Type GetEnumerableType(this Type returnType) =>
-            EnumerableTypes.GetOrAdd(returnType, CreateEnumerableType);
+        public static Type GetEnumerableType(this Type returnType)
+        {
+            return EnumerableTypes.GetOrAdd(returnType, CreateEnumerableType);
+        }
 
-        private static Type CreateEnumerableType(Type type) =>
-            typeof(IEnumerable<>).MakeGenericType(type);
+        private static Type CreateEnumerableType(Type type)
+        {
+            return typeof(IEnumerable<>).MakeGenericType(type);
+        }
     }
 }
